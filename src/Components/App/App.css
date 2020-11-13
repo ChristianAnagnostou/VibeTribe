@@ -27,13 +27,10 @@ h2 {
 }
 
 .App {
-  height: 100%;
+  min-height: 100vh;
   padding: 0 17% 10% 17%;
-  background-image: url('./background_photo_desktop.webp');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  font-family: 'Work Sans', sans-serif;
+  background: rgb(56,26,143);
+  background: radial-gradient(circle, rgba(56,26,143,1) 20%, rgba(97,59,210,1) 70%, rgba(109,87,177,1) 100%);  font-family: 'Work Sans', sans-serif;
   font-weight: 500;
   color: #fff;
 }

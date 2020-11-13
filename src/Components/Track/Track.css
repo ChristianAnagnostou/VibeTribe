@@ -36,3 +36,8 @@
     font-weight: 300;
     color: rgba(256, 256, 256, 0.8);
 }
+
+.Track:active:hover{
+    cursor: -webkit-grabbing;
+    cursor: grabbing;
+}

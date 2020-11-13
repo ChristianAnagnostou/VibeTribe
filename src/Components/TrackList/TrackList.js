@@ -10,10 +10,15 @@ export class TrackList extends React.Component {
                 name={track.name} 
                 artist={track.artist} 
                 album={track.album} 
-                id={track.id} 
+                id={track.id}
+                uri={track.uri} 
                 isRemovable={this.props.isRemovable} 
+                isDraggable={this.props.isDraggable}
                 addTrack={this.props.onAdd} 
                 removeTrack={this.props.onRemove}
+                onDragStart={this.props.onDragStart}
+                onDrop={this.props.onDrop} 
+                onDragOver={this.props.onDragOver}
             />
         });
     }
