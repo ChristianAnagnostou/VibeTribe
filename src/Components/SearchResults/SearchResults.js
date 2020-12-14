@@ -9,11 +9,9 @@ export class SearchResults extends React.Component {
                 <h2>Results</h2>
                 <TrackList 
                     tracks={this.props.searchResults} 
-                    isDraggable={true}
                     isRemovable={false}
                     onAdd={this.props.onAdd}
                     updatePlaylistName={this.updatePlaylistName}
-                    onDragStart={this.props.onDragStart}
                 />
             </div>
         );

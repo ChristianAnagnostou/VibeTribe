@@ -1,7 +1,7 @@
 body,
 html,
 #root {
-  height: 100%;
+  height: 100vh;
 }
 
 html {
@@ -9,10 +9,10 @@ html {
 }
 
 h1 {
-  padding: .77rem 0;
+  padding: 0.77rem 0;
   background-color: #010c3f;
   text-align: center;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-size: 1.88rem;
   color: #fff;
 }
@@ -22,17 +22,27 @@ h1 .highlight {
 }
 
 h2 {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-size: 1.55rem;
 }
 
 .App {
   min-height: 100vh;
-  padding: 0 17% 10% 17%;
-  background: rgb(56,26,143);
-  background: radial-gradient(circle, rgba(56,26,143,1) 20%, rgba(97,59,210,1) 70%, rgba(109,87,177,1) 100%);  font-family: 'Work Sans', sans-serif;
+  padding: 80px 17% 5% 17%;
+  background: rgb(56, 26, 143);
+  background: linear-gradient(to top right, rgb(210, 210, 210) 20%, rgb(255, 255, 255) 100%);
+  font-family: "Work Sans", sans-serif;
   font-weight: 500;
   color: #fff;
+}
+
+.App-inner-container {
+  padding: 0 5% 5%;
+  border: 5px solid #a79ec2;
+  background: linear-gradient(to bottom left, rgb(66, 31, 169) 20%, rgba(97, 59, 210, 1) 70%);
+  box-shadow: 0px 0px 20px rgb(42, 26, 63);
+  border-radius: 10px;
+  position: relative;
 }
 
 .App-playlist {
@@ -42,6 +52,10 @@ h2 {
 }
 
 @media only screen and (max-width: 1020px) {
+  .App {
+    padding: 75px 5% 10% 5%;
+  }
+
   .App-playlist {
     align-items: center;
     flex-direction: column;

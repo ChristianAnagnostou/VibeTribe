@@ -13,10 +13,8 @@ export class Playlist extends React.Component {
             <input value={this.props.playlistName} onChange={this.handlePlaylistNameChange}/>
             <TrackList 
                 tracks={this.props.playlist} 
-                isDraggable={false}
                 isRemovable={true}
                 onRemove={this.props.onRemove}
-                onDrop={this.props.onDrop} 
             />
             <button className="Playlist-save" onClick={this.props.onSave}>SAVE TO SPOTIFY</button>
         </div>
