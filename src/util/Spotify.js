@@ -1,6 +1,5 @@
-const clientID = "053f2e85785e496ab82d9b0f6b8d29e6";
-const redirectURI = "http://christians-jams.surge.sh/";
 // const redirectURI = "http://localhost:3000/"; //only used with "npm start"
+const redirectURI = "http://christians-jams.surge.sh/";
 let accessToken;
 let userName;
 let userProfileImg;
@@ -24,7 +23,7 @@ const Spotify = {
       window.history.pushState("Access Token", null, "/");
       return accessToken;
     } else {
-      window.location = `https://accounts.spotify.com/authorize?client_id=${clientID}&response_type=token&scope=playlist-modify-public&redirect_uri=${redirectURI}`;
+      window.location = `https://accounts.spotify.com/authorize?client_id=${process.env.REACT_APP_SPOTIFY_API_CLEINT_ID}&response_type=token&scope=playlist-modify-public&redirect_uri=${redirectURI}`;
     }
   },
 
