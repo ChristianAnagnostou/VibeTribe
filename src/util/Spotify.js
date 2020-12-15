@@ -1,7 +1,10 @@
 const clientID = "053f2e85785e496ab82d9b0f6b8d29e6";
 const redirectURI = "http://christians-jams.surge.sh/";
-// const redirectURI = "http://localhost:3000/";
+// const redirectURI = "http://localhost:3000/"; //only used with "npm start"
 let accessToken;
+let userName;
+let userProfileImg;
+let userOwnedPlaylists;
 
 const Spotify = {
   getAccessToken() {
@@ -25,12 +28,68 @@ const Spotify = {
     }
   },
 
+  async getUserInfo() {
+    if (!accessToken) {
+      accessToken = Spotify.getAccessToken();
+    }
+
+    if (!userName || !userProfileImg) {
+      // fetch userName and userProfileImg
+      try {
+        const response = await fetch("https://api.spotify.com/v1/me", {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        const jsonResponse = await response.json();
+        userName = jsonResponse.display_name;
+        userProfileImg = jsonResponse.images[0].url;
+      } catch (e) {
+        console.log(e);
+      }
+      // fetch userOwnedPlaylists
+      try {
+        const response = await fetch("https://api.spotify.com/v1/me/playlists", {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        const jsonResponse = await response.json();
+        const userPlaylists = jsonResponse.items;
+        userOwnedPlaylists = userPlaylists.filter((playlist) => {
+          return playlist.owner.display_name === userName;
+        });
+      } catch (e) {
+        console.log(e);
+      }
+    }
+    return { userName, userProfileImg, userOwnedPlaylists };
+  },
+
+  async getPlaylistSongs(playlistID) {
+    try {
+      const response = await fetch(`https://api.spotify.com/v1/playlists/${playlistID}/tracks`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      const jsonResponse = await response.json();
+      const playlistTracks = jsonResponse.items;
+      return playlistTracks;
+    } catch (e) {
+      console.log(e);
+    }
+  },
+
   async search(term) {
-    const currentAccessToken = Spotify.getAccessToken();
+    if (!accessToken) {
+      accessToken = Spotify.getAccessToken();
+    }
+
     try {
       const response = await fetch(`https://api.spotify.com/v1/search?type=track&q=${term}`, {
         headers: {
-          Authorization: `Bearer ${currentAccessToken}`,
+          Authorization: `Bearer ${accessToken}`,
         },
       });
       const jsonResponse = await response.json();

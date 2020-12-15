@@ -1,28 +1,24 @@
+/* User is NOT signed in */
 .sign-in-tab {
-  background: linear-gradient(to bottom, #7048e9, #512cbd);
+  background: rgba(1, 12, 63, 0.7);
   color: white;
   width: fit-content;
-  padding: 0.5rem 1rem;
-  border-radius: 10px 10px 0px 0px;
-  border-top: 3px solid #a79ec2;
-  border-left: 3px solid #a79ec2;
-  border-right: 3px solid #a79ec2;
+  padding: 0.5rem;
+  border-radius: 5px;
   position: absolute;
-  top: -45px;
-  left: 5%;
+  top: 10px;
+  right: 10px;
   text-align: center;
-  font-weight: thin;
   font-size: 0.7rem;
   transition: all 0.2s ease-in-out;
   cursor: pointer;
-  text-shadow: 0px 2px black;
-  -webkit-box-shadow: 0px -4px 30px rgb(42, 26, 63);
-  -moz-box-shadow: 0px -4px 30px rgb(42, 26, 63);
-  box-shadow: 0px -4px 7px rgba(42, 26, 63, 0.338);
 }
-
 .sign-in-tab:hover {
-  top: -54px;
-
-  padding: 0.75rem 1rem;
+  background: rgba(1, 8, 41, 0.7);
+  box-shadow: 0px 0px 5px rgb(42, 26, 63);
+}
+.sign-in-text {
+  line-height: 0.9rem;
+  letter-spacing: 1px;
+  font-weight: bold;
 }

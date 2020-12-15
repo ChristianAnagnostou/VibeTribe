@@ -61,7 +61,7 @@ export class App extends React.Component {
         </h1>
         <div className="App">
           <div className="App-inner-container">
-            <SignInTab />
+            <SignInTab addTrack={this.addTrack} updatePlaylistName={this.updatePlaylistName}/>
             <SearchBar onSearch={this.search} />
             <div className="App-playlist">
               <SearchResults searchResults={this.state.searchResults} onAdd={this.addTrack} />
