@@ -17,7 +17,6 @@ export class SignInTab extends React.Component {
   };
 
   async componentDidMount() {
-    console.log("mount");
     if (window.location.href.match(/access_token=([^&]*)/)) {
       try {
         const userResponse = await Spotify.getUserInfo();
@@ -47,6 +46,7 @@ export class SignInTab extends React.Component {
           addTrack={this.props.addTrack}
           updatePlaylistName={this.props.updatePlaylistName}
           playlistName={this.props.playlistName}
+          emptyPlaylist={this.props.emptyPlaylist}
         />
       );
     } else {

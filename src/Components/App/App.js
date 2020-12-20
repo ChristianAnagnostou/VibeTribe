@@ -16,6 +16,10 @@ export class App extends React.Component {
     };
   }
 
+  emptyPlaylist = () => {
+    this.setState({ playlist: [] });
+  };
+
   addTrack = (track) => {
     if (this.state.playlist.find((savedTrack) => savedTrack.id === track.id)) {
       return;
@@ -39,6 +43,7 @@ export class App extends React.Component {
   };
 
   savePlaylist = async () => {
+    console.log(this.state.playlist);
     const playlistURIs = this.state.playlist.map((track) => track.uri);
     await Spotify.savePlaylist(this.state.playlistName, playlistURIs);
     this.setState({
@@ -65,6 +70,7 @@ export class App extends React.Component {
               addTrack={this.addTrack}
               updatePlaylistName={this.updatePlaylistName}
               playlistName={this.state.playlistName}
+              emptyPlaylist={this.emptyPlaylist}
             />
             <SearchBar onSearch={this.search} />
             <div className="App-playlist">

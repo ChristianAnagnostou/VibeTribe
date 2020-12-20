@@ -20,6 +20,7 @@ export default class AccountInfo extends Component {
   };
 
   importPlaylist = (playlist) => {
+    this.props.emptyPlaylist();
     this.props.updatePlaylistName(playlist.name);
     Spotify.getPlaylistSongs(playlist.id).then((songs) => {
       songs.map((song) => {
