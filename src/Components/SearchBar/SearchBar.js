@@ -15,7 +15,7 @@ export class SearchBar extends React.Component {
     this.props.onSearch(this.state.inputTerm);
   };
 
-  handleKeyPress = (e) => {
+  handleKeyDown = (e) => {
     if (e.key === "Enter") {
       this.handleSearch();
     }
@@ -28,7 +28,7 @@ export class SearchBar extends React.Component {
           type="text"
           placeholder="Enter A Song, Album, or Artist"
           onChange={this.handleTermChange}
-          onChange={this.handleKeyPress}
+          onKeyDown={this.handleKeyDown}
         />
         <button className="SearchButton" onClick={this.handleSearch}>
           SEARCH

@@ -1,11 +1,18 @@
 import React, { Component } from "react";
 import "./AccountInfo.css";
 import Spotify from "../../util/Spotify";
+import equal from "fast-deep-equal";
 
 export default class AccountInfo extends Component {
   constructor(props) {
     super(props);
     this.state = { tabActive: false };
+  }
+
+  componentDidUpdate(prevProps) {
+    if (!equal(this.props.playlistName, prevProps.playlistName)) {
+      this.props.setUserInfoPlaylistsState();
+    }
   }
 
   toggleTab = (e) => {

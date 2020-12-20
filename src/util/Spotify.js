@@ -1,3 +1,4 @@
+const clientID = "053f2e85785e496ab82d9b0f6b8d29e6";
 // const redirectURI = "http://localhost:3000/"; //only used with "npm start"
 const redirectURI = "http://christians-jams.surge.sh/";
 let accessToken;
@@ -23,7 +24,7 @@ const Spotify = {
       window.history.pushState("Access Token", null, "/");
       return accessToken;
     } else {
-      window.location = `https://accounts.spotify.com/authorize?client_id=${process.env.REACT_APP_SPOTIFY_API_CLEINT_ID}&response_type=token&scope=playlist-modify-public&redirect_uri=${redirectURI}`;
+      window.location = `https://accounts.spotify.com/authorize?client_id=${clientID}&response_type=token&scope=playlist-modify-public&redirect_uri=${redirectURI}`;
     }
   },
 
@@ -34,35 +35,46 @@ const Spotify = {
 
     if (!userName || !userProfileImg) {
       // fetch userName and userProfileImg
-      try {
-        const response = await fetch("https://api.spotify.com/v1/me", {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-        const jsonResponse = await response.json();
-        userName = jsonResponse.display_name;
-        userProfileImg = jsonResponse.images[0].url;
-      } catch (e) {
-        console.log(e);
-      }
-      // fetch userOwnedPlaylists
-      try {
-        const response = await fetch("https://api.spotify.com/v1/me/playlists", {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-        const jsonResponse = await response.json();
-        const userPlaylists = jsonResponse.items;
-        userOwnedPlaylists = userPlaylists.filter((playlist) => {
-          return playlist.owner.display_name === userName;
-        });
-      } catch (e) {
-        console.log(e);
-      }
+      const userNameAndImg = await this.getUserNameAndImg();
+
+      const { userName, userProfileImg } = userNameAndImg;
+      const userOwnedPlaylists = await this.getUserOwnedPlaylists();
+      return { userName, userProfileImg, userOwnedPlaylists };
     }
+    // fetch userOwnedPlaylists
     return { userName, userProfileImg, userOwnedPlaylists };
+  },
+  async getUserNameAndImg() {
+    try {
+      const response = await fetch("https://api.spotify.com/v1/me", {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      const jsonResponse = await response.json();
+      userName = jsonResponse.display_name;
+      userProfileImg = jsonResponse.images[0].url;
+      return { userName, userProfileImg };
+    } catch (e) {
+      console.log(e);
+    }
+  },
+  async getUserOwnedPlaylists() {
+    try {
+      const response = await fetch("https://api.spotify.com/v1/me/playlists", {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      const jsonResponse = await response.json();
+      const userPlaylists = jsonResponse.items;
+      userOwnedPlaylists = userPlaylists.filter((playlist) => {
+        return playlist.owner.display_name === userName;
+      });
+      return userOwnedPlaylists;
+    } catch (e) {
+      console.log(e);
+    }
   },
 
   async getPlaylistSongs(playlistID) {

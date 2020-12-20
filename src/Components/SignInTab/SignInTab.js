@@ -12,30 +12,46 @@ export class SignInTab extends React.Component {
     };
   }
 
-  handleClick = () => {
+  handleSignIn = () => {
     Spotify.getAccessToken();
   };
 
-  componentDidMount() {
+  async componentDidMount() {
+    console.log("mount");
     if (window.location.href.match(/access_token=([^&]*)/)) {
-      Spotify.getUserInfo().then((userResponse) => {
+      try {
+        const userResponse = await Spotify.getUserInfo();
         this.setState({ isSignedIn: true, userInfo: userResponse });
-      });
+        if (!userResponse.ok) {
+          throw Error(userResponse.statusText);
+        }
+      } catch (e) {
+        console.log(e);
+      }
     }
   }
+
+  setUserInfoPlaylistsState = async () => {
+    const updatedUserOwnedPlaylists = await Spotify.getUserOwnedPlaylists();
+    this.setState({
+      userInfo: { ...this.state.userInfo, userOwnedPlaylists: updatedUserOwnedPlaylists },
+    });
+  };
 
   render() {
     if (this.state.isSignedIn) {
       return (
         <AccountInfo
           userInfo={this.state.userInfo}
+          setUserInfoPlaylistsState={this.setUserInfoPlaylistsState}
           addTrack={this.props.addTrack}
           updatePlaylistName={this.props.updatePlaylistName}
+          playlistName={this.props.playlistName}
         />
       );
     } else {
       return (
-        <div onClick={this.handleClick} className="sign-in-tab">
+        <div onClick={this.handleSignIn} className="sign-in-tab">
           <div className="sign-in-text">
             <p>SPOTIFY</p>
             <p>LOGIN</p>
