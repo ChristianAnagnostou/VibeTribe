@@ -58,11 +58,7 @@ export class App extends React.Component {
   savePlaylist = async () => {
     const trackURIs = this.state.playlist.map((track) => track.uri);
     await Spotify.savePlaylist(this.state.playlistName, trackURIs, this.state.playlistID);
-    this.setState({
-      playlistName: "New Playlist",
-      playlist: [],
-      playlistID: null,
-    });
+    this.resetAllInPlaylist();
   };
 
   search = async (term) => {

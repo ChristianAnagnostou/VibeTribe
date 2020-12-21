@@ -1,6 +1,6 @@
 const clientID = "053f2e85785e496ab82d9b0f6b8d29e6";
-const redirectURI = "http://localhost:3000/"; //only used with "npm start"
-// const redirectURI = "http://christians-jams.surge.sh/";
+// const redirectURI = "http://localhost:3000/"; //only used with "npm start"
+const redirectURI = "http://christians-jams.surge.sh/";
 let accessToken;
 let userName;
 let userProfileImg;
