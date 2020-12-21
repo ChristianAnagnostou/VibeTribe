@@ -10,14 +10,31 @@ export class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      playlistName: "New Playlist",
+      playlistName: "",
       searchResults: [],
       playlist: [],
+      playlistID: null,
     };
   }
 
+  setPlaylistID = (uri) => {
+    this.setState({ playlistID: uri });
+  };
+
   emptyPlaylist = () => {
     this.setState({ playlist: [] });
+  };
+
+  updatePlaylistName = (newName) => {
+    this.setState({ playlistName: newName });
+  };
+
+  resetAllInPlaylist = () => {
+    this.setState({
+      playlistName: "",
+      playlist: [],
+      playlistID: null,
+    });
   };
 
   addTrack = (track) => {
@@ -38,17 +55,13 @@ export class App extends React.Component {
     this.setState({ playlist: playlistToEdit });
   };
 
-  updatePlaylistName = (newName) => {
-    this.setState({ playlistName: newName });
-  };
-
   savePlaylist = async () => {
-    console.log(this.state.playlist);
-    const playlistURIs = this.state.playlist.map((track) => track.uri);
-    await Spotify.savePlaylist(this.state.playlistName, playlistURIs);
+    const trackURIs = this.state.playlist.map((track) => track.uri);
+    await Spotify.savePlaylist(this.state.playlistName, trackURIs, this.state.playlistID);
     this.setState({
       playlistName: "New Playlist",
       playlist: [],
+      playlistID: null,
     });
   };
 
@@ -57,6 +70,12 @@ export class App extends React.Component {
     let tracksArr = await Spotify.search(term);
     this.setState({ searchResults: tracksArr });
   };
+
+  componentDidMount() {
+    if (localStorage.getItem("userAccessToken")) {
+      Spotify.getAccessToken();
+    }
+  }
 
   render() {
     return (
@@ -71,6 +90,7 @@ export class App extends React.Component {
               updatePlaylistName={this.updatePlaylistName}
               playlistName={this.state.playlistName}
               emptyPlaylist={this.emptyPlaylist}
+              setPlaylistID={this.setPlaylistID}
             />
             <SearchBar onSearch={this.search} />
             <div className="App-playlist">
@@ -81,6 +101,7 @@ export class App extends React.Component {
                 updatePlaylistName={this.updatePlaylistName}
                 onRemove={this.removeTrack}
                 onSave={this.savePlaylist}
+                resetAllInPlaylist={this.resetAllInPlaylist}
               />
             </div>
           </div>

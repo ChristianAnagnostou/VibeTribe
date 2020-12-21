@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "./Playlist.css";
 import { TrackList } from "../TrackList/TrackList";
 
@@ -14,12 +14,37 @@ export class Playlist extends React.Component {
           type="text"
           value={this.props.playlistName}
           onChange={this.handlePlaylistNameChange}
+          placeholder="Playlist Name"
         />
         <TrackList tracks={this.props.playlist} isRemovable={true} onRemove={this.props.onRemove} />
-        <button className="Playlist-save" onClick={this.props.onSave}>
-          SAVE TO SPOTIFY
-        </button>
+        <div className="playlist-controls">
+          <button className="Playlist-save" onClick={this.props.onSave}>
+            Save To Spotify
+          </button>
+          <ClearPlaylist resetAllInPlaylist={this.props.resetAllInPlaylist} />
+        </div>
       </div>
     );
   }
 }
+
+function ClearPlaylist({ resetAllInPlaylist }) {
+  const [isClicked, setIsClicked] = useState(false);
+
+  const handleSliderClick = () => {
+    setIsClicked(true);
+    setTimeout(() => resetAllInPlaylist(), 200);
+    setTimeout(() => setIsClicked(false), 200);
+  };
+
+  return (
+    <button className="clear-playlist" onClick={handleSliderClick}>
+      <div>Clear All</div>
+      <div className="slider">
+        <div className={isClicked ? "slider-thumb animate-thumb" : "slider-thumb"}></div>
+      </div>
+    </button>
+  );
+}
+
+export default Playlist;

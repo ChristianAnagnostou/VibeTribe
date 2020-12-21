@@ -1,9 +1,11 @@
 /* User is signed in */
 .account-info-tab {
-  background: rgb(232, 232, 232);
+  background: rgba(1, 12, 63, 0.85);
   box-shadow: 0px 0px 10px rgb(36, 36, 36);
   color: white;
   padding: 0.5rem;
+  margin-left: 10px;
+  border: none;
   border-radius: 5px;
   position: absolute;
   top: 10px;
@@ -26,38 +28,34 @@
   transition: all 0.2s ease-in;
 }
 
-.account-info-title {
-  color: #6c41ec;
-  font-weight: bold;
-  border-bottom: 2px solid rgb(181, 181, 181);
-  font-size: 1rem;
-  padding-bottom: 3px;
-  margin-bottom: 5px;
-  width: fit-content;
-}
 .account-info-username {
   margin-bottom: 15px;
-  color: #323232;
-  font-size: 0.9rem;
+  color: white;
+  font-size: 1.1rem;
 }
 .import-playlist-title {
-  color: #6c41ec;
+  color: white;
   font-weight: bold;
-  border-bottom: 2px solid rgb(181, 181, 181);
   font-size: 0.9rem;
   padding-bottom: 3px;
   margin-bottom: 5px;
   width: fit-content;
+}
+.user-playlists-container {
+  width: 131%;
 }
 .user-playlist {
   padding: 0.25rem 3px;
-  width: fit-content;
-  background: #323232;
+  width: 100%;
+  background: transparent;
   border-radius: 3px;
   cursor: pointer;
   margin: 2px 0;
   transition: all 0.25s ease-in-out;
 }
+.user-playlist:not(:last-child) {
+  border-bottom: 1px solid white;
+}
 .user-playlist:hover {
-  background: #4d4d4d;
+  background: #6c41ec;
 }

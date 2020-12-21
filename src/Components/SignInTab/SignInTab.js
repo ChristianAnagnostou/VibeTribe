@@ -47,16 +47,17 @@ export class SignInTab extends React.Component {
           updatePlaylistName={this.props.updatePlaylistName}
           playlistName={this.props.playlistName}
           emptyPlaylist={this.props.emptyPlaylist}
+          setPlaylistID={this.props.setPlaylistID}
         />
       );
     } else {
       return (
-        <div onClick={this.handleSignIn} className="sign-in-tab">
+        <button onClick={this.handleSignIn} className="sign-in-tab">
           <div className="sign-in-text">
+            <p>Login to </p>
             <p>SPOTIFY</p>
-            <p>LOGIN</p>
           </div>
-        </div>
+        </button>
       );
     }
   }

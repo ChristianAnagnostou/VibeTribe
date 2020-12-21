@@ -26,8 +26,12 @@ h2 {
   font-size: 1.55rem;
 }
 
+button:focus {
+  outline: 1px solid rgb(154, 125, 242);
+}
+
 .App {
-  min-height: 100vh;
+  min-height: 80vh;
   padding: 80px 17% 5% 17%;
   background: rgb(56, 26, 143);
   background: linear-gradient(to top right, rgb(210, 210, 210) 20%, rgb(255, 255, 255) 100%);

@@ -22,6 +22,7 @@ export default class AccountInfo extends Component {
   importPlaylist = (playlist) => {
     this.props.emptyPlaylist();
     this.props.updatePlaylistName(playlist.name);
+    this.props.setPlaylistID(playlist.id);
     Spotify.getPlaylistSongs(playlist.id).then((songs) => {
       songs.map((song) => {
         this.props.addTrack({
@@ -43,28 +44,37 @@ export default class AccountInfo extends Component {
           <img src={this.props.userInfo.userProfileImg} alt="User" className="user-image" />
         </div>
         {this.state.tabActive && (
-          <div>
-            <p className="account-info-title">Account</p>
-            <p className="account-info-username">{this.props.userInfo.userName}</p>
-            <div>
-              <p className="import-playlist-title">Import playlist</p>
-              <div>
-                {this.props.userInfo.userOwnedPlaylists.map((playlist) => {
-                  return (
-                    <p
-                      key={playlist.id}
-                      onClick={() => this.importPlaylist(playlist)}
-                      className={"user-playlist"}
-                    >
-                      {playlist.name}
-                    </p>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
+          <OpenTab
+            userName={this.props.userInfo.userName}
+            userOwnedPlaylists={this.props.userInfo.userOwnedPlaylists}
+            importPlaylist={this.importPlaylist}
+          />
         )}
       </div>
     );
   }
+}
+
+function OpenTab({ userName, userOwnedPlaylists, importPlaylist }) {
+  return (
+    <div>
+      <p className="account-info-username">{userName}</p>
+      <div className="user-playlists-container">
+        <p className="import-playlist-title">Import playlist</p>
+        <div>
+          {userOwnedPlaylists.map((playlist) => {
+            return (
+              <p
+                key={playlist.id}
+                onClick={() => importPlaylist(playlist)}
+                className={"user-playlist"}
+              >
+                {playlist.name}
+              </p>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
 }

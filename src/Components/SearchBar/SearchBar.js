@@ -26,7 +26,7 @@ export class SearchBar extends React.Component {
       <div className="SearchBar">
         <input
           type="text"
-          placeholder="Enter A Song, Album, or Artist"
+          placeholder="Song, Album, or Artist"
           onChange={this.handleTermChange}
           onKeyDown={this.handleKeyDown}
         />
