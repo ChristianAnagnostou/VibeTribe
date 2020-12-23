@@ -21,14 +21,17 @@ export class Playlist extends React.Component {
           <button className="Playlist-save" onClick={this.props.onSave}>
             Save To Spotify
           </button>
-          <ClearPlaylist resetAllInPlaylist={this.props.resetAllInPlaylist} />
+          <ClearPlaylist
+            resetAllInPlaylist={this.props.resetAllInPlaylist}
+            playlistLength={this.props.playlist.length}
+          />
         </div>
       </div>
     );
   }
 }
 
-function ClearPlaylist({ resetAllInPlaylist }) {
+function ClearPlaylist({ resetAllInPlaylist, playlistLength }) {
   const [isClicked, setIsClicked] = useState(false);
 
   const handleSliderClick = () => {
@@ -38,7 +41,11 @@ function ClearPlaylist({ resetAllInPlaylist }) {
   };
 
   return (
-    <button className="clear-playlist" onClick={handleSliderClick}>
+    <button
+      className={!playlistLength ? "clear-playlist disabled" : "clear-playlist"}
+      onClick={handleSliderClick}
+      disabled={!playlistLength}
+    >
       <div>Clear All</div>
       <div className="slider">
         <div className={isClicked ? "slider-thumb animate-thumb" : "slider-thumb"}></div>

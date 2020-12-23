@@ -58,10 +58,13 @@
   padding: 0.77rem 0.65rem;
   border-radius: 54px;
   border: none;
-
   background-color: rgb(108, 65, 236);
   font-size: 0.9rem;
   cursor: pointer;
+}
+.disabled {
+  background-color: rgb(84, 84, 84);
+  cursor: default;
 }
 .slider {
   margin-left: 5px;

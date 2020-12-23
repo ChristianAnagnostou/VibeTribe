@@ -68,7 +68,8 @@ export class App extends React.Component {
   };
 
   componentDidMount() {
-    if (localStorage.getItem("userAccessToken")) {
+    const token = localStorage.getItem("userAccessToken");
+    if (token) {
       Spotify.getAccessToken();
     }
   }
@@ -77,7 +78,7 @@ export class App extends React.Component {
     return (
       <div>
         <h1>
-          Ja<span className="highlight">mm</span>ing
+          Spot-<span className="highlight">A</span>-List
         </h1>
         <div className="App">
           <div className="App-inner-container">

@@ -7,6 +7,9 @@ let userProfileImg;
 let userOwnedPlaylists;
 
 const Spotify = {
+  setAccessToken(token) {
+    accessToken = token;
+  },
   // Get the users access token
   getAccessToken() {
     if (accessToken) {
