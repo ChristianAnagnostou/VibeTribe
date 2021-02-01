@@ -1,109 +1,194 @@
-import React from "react";
-import "./App.css";
-import { SearchBar } from "../SearchBar/SearchBar";
-import { SearchResults } from "../SearchResults/SearchResults";
-import { Playlist } from "../Playlist/Playlist";
-import { SignInTab } from "../SignInTab/SignInTab";
+import React, { useState, useEffect } from "react";
+// Components
+import SearchBar from "../SearchBar/SearchBar";
+import SearchResults from "../SearchResults/SearchResults";
+import Playlist from "../Playlist/Playlist";
+import SignInTab from "../SignInTab/SignInTab";
 import Spotify from "../../util/Spotify";
+// Styles
+import styled from "styled-components";
+// Icon
+import LibraryMusicIcon from "@material-ui/icons/LibraryMusic";
 
-export class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      playlistName: "",
-      searchResults: [],
-      playlist: [],
-      playlistID: null,
-    };
-  }
+const App = () => {
+  const [playlistName, setPlaylistName] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [playlist, setPlaylist] = useState([]);
+  const [playlistID, setPlaylistID] = useState(null);
+  const [activeTab, setActiveTab] = useState("results");
 
-  setPlaylistID = (uri) => {
-    this.setState({ playlistID: uri });
+  const handleTabClick = (tab) => {
+    setActiveTab(tab);
   };
 
-  emptyPlaylist = () => {
-    this.setState({ playlist: [] });
+  const setPlaylistIDFunction = (uri) => {
+    setPlaylistID(uri);
   };
 
-  updatePlaylistName = (newName) => {
-    this.setState({ playlistName: newName });
+  const emptyPlaylist = () => {
+    setPlaylist([]);
   };
 
-  resetAllInPlaylist = () => {
-    this.setState({
-      playlistName: "",
-      playlist: [],
-      playlistID: null,
-    });
+  const updatePlaylistName = (newName) => {
+    setPlaylistName(newName);
   };
 
-  addTrack = (track) => {
-    if (this.state.playlist.find((savedTrack) => savedTrack.id === track.id)) {
+  const resetAllInPlaylist = () => {
+    setPlaylistName("");
+    setPlaylist([]);
+    setPlaylistID(null);
+  };
+
+  const addTrack = (newTrack) => {
+    if (playlist.find((savedTrack) => savedTrack.id === newTrack.id)) {
       return;
     } else {
-      this.setState((prevState) => ({
-        playlist: [...prevState.playlist, track],
-      }));
+      setPlaylist((prevState) => [...prevState, newTrack]);
     }
   };
 
-  removeTrack = (track) => {
-    const playlistToEdit = [...this.state.playlist];
-    const trackToRemove = this.state.playlist.find((savedTrack) => savedTrack.id === track.id);
-    const index = playlistToEdit.indexOf(trackToRemove);
-    playlistToEdit.splice(index, 1);
-    this.setState({ playlist: playlistToEdit });
+  const removeTrack = (track) => {
+    const filtered = playlist.filter((savedTrack) => savedTrack.id !== track.id);
+    setPlaylist([...filtered]);
   };
 
-  savePlaylist = async () => {
-    const trackURIs = this.state.playlist.map((track) => track.uri);
-    await Spotify.savePlaylist(this.state.playlistName, trackURIs, this.state.playlistID);
-    this.resetAllInPlaylist();
+  const savePlaylist = async () => {
+    const trackURIs = playlist.map((track) => track.uri);
+    await Spotify.savePlaylist(playlistName, trackURIs, playlistID);
+    resetAllInPlaylist();
   };
 
-  search = async (term) => {
+  const search = async (term) => {
     console.log(`searching spotify for ${term}`);
     let tracksArr = await Spotify.search(term);
-    this.setState({ searchResults: tracksArr });
+    setSearchResults(tracksArr);
   };
 
-  componentDidMount() {
+  useEffect(() => {
     const token = localStorage.getItem("userAccessToken");
     if (token) {
       Spotify.getAccessToken();
     }
-  }
+  }, []);
 
-  render() {
-    return (
-      <div>
-        <h1>
-          Spot-<span className="highlight">A</span>-List
-        </h1>
-        <div className="App">
-          <div className="App-inner-container">
-            <SignInTab
-              addTrack={this.addTrack}
-              updatePlaylistName={this.updatePlaylistName}
-              playlistName={this.state.playlistName}
-              emptyPlaylist={this.emptyPlaylist}
-              setPlaylistID={this.setPlaylistID}
-            />
-            <SearchBar onSearch={this.search} />
-            <div className="App-playlist">
-              <SearchResults searchResults={this.state.searchResults} onAdd={this.addTrack} />
+  return (
+    <MainContainer>
+      <header>
+        <div className="flex-container">
+          <h1 className="logo">
+            <LibraryMusicIcon style={{ fontSize: "1.4rem" }} />
+            <span>Vibe</span>Tribe
+          </h1>
+          <SignInTab
+            addTrack={addTrack}
+            updatePlaylistName={updatePlaylistName}
+            playlistName={playlistName}
+            emptyPlaylist={emptyPlaylist}
+            setPlaylistID={setPlaylistIDFunction}
+          />
+        </div>
+        <SearchBar onSearch={search} />
+      </header>
+      <main>
+        <div className="App-inner-container">
+          <nav className="nav">
+            <h1 onClick={() => handleTabClick("results")}>Results</h1>
+            <h1 onClick={() => handleTabClick("playlist")}>Playlist</h1>
+          </nav>
+          <div className="App-playlist">
+            {activeTab === "results" ? (
+              <SearchResults searchResults={searchResults} onAdd={addTrack} />
+            ) : (
               <Playlist
-                playlist={this.state.playlist}
-                playlistName={this.state.playlistName}
-                updatePlaylistName={this.updatePlaylistName}
-                onRemove={this.removeTrack}
-                onSave={this.savePlaylist}
-                resetAllInPlaylist={this.resetAllInPlaylist}
+                playlist={playlist}
+                playlistName={playlistName}
+                updatePlaylistName={updatePlaylistName}
+                onRemove={removeTrack}
+                onSave={savePlaylist}
+                resetAllInPlaylist={resetAllInPlaylist}
               />
-            </div>
+            )}
           </div>
         </div>
-      </div>
-    );
+      </main>
+    </MainContainer>
+  );
+};
+
+const MainContainer = styled.div`
+  width: 100%;
+  /* ::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+  } */
+
+  header {
+    background: rgb(29, 53, 87);
+    color: rgb(241, 250, 238);
+    padding: 1rem 2rem;
+    height: 35vh;
+    .logo {
+      font-size: 2rem;
+      font-weight: 400;
+      span {
+        font-weight: 800;
+      }
+    }
   }
-}
+
+  main {
+    min-height: 65vh;
+    overflow-x: hidden;
+    width: 100%;
+    background: rgb(69, 123, 157);
+
+    font-family: "Work Sans", sans-serif;
+    color: #fff;
+    display: grid;
+    justify-content: fill;
+    grid-template-rows: 1fr;
+
+    .App-inner-container {
+      position: relative;
+      border-radius: 5px;
+      nav {
+        background: rgb(241, 250, 238);
+        color: rgb(29, 53, 87);
+        display: flex;
+        height: 2.5rem;
+
+        h1 {
+          height: 100%;
+          width: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          cursor: pointer;
+          border-bottom: 1px solid rgb(221, 221, 221);
+
+          &:hover {
+            background: rgb(236, 236, 236);
+          }
+          &:first-child {
+            border-right: 1px solid rgb(221, 221, 221);
+          }
+        }
+      }
+    }
+
+    .App-playlist {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+    }
+  }
+
+  @media only screen and (max-width: 1020px) {
+    .App-playlist {
+      align-items: center;
+      flex-direction: column;
+    }
+  }
+`;
+
+export default App;

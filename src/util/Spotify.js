@@ -1,6 +1,6 @@
 const clientID = "053f2e85785e496ab82d9b0f6b8d29e6";
-// const redirectURI = "http://localhost:3000/"; //only used with "npm start"
-const redirectURI = "http://christians-jams.surge.sh/";
+const redirectURI = "http://localhost:3000/"; //only used for dev testing
+// const redirectURI = "http://spotalist.surge.sh/";
 let accessToken;
 let userName;
 let userProfileImg;
@@ -115,6 +115,7 @@ const Spotify = {
       if (!tracks) {
         return [];
       }
+      console.log(tracks);
       const tracksArr = tracks.items.map((track) => {
         return {
           id: track.id,
@@ -124,6 +125,7 @@ const Spotify = {
           uri: track.uri,
           href: track.album.href,
           previewUrl: track.preview_url,
+          image: track.album.images[1].url,
         };
       });
       return tracksArr;

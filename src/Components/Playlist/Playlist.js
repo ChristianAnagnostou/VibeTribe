@@ -1,57 +1,108 @@
-import React, { useState } from "react";
-import "./Playlist.css";
-import { TrackList } from "../TrackList/TrackList";
+import React from "react";
+// Components
+import TrackList from "../TrackList/TrackList";
+// Styles
+import styled from "styled-components";
 
-export class Playlist extends React.Component {
-  handlePlaylistNameChange = (e) => {
-    this.props.updatePlaylistName(e.target.value);
-  };
-
-  render() {
-    return (
-      <div className="Playlist">
-        <input
-          type="text"
-          value={this.props.playlistName}
-          onChange={this.handlePlaylistNameChange}
-          placeholder="Playlist Name"
-        />
-        <TrackList tracks={this.props.playlist} isRemovable={true} onRemove={this.props.onRemove} />
-        <div className="playlist-controls">
-          <button className="Playlist-save" onClick={this.props.onSave}>
-            Save To Spotify
-          </button>
-          <ClearPlaylist
-            resetAllInPlaylist={this.props.resetAllInPlaylist}
-            playlistLength={this.props.playlist.length}
-          />
-        </div>
-      </div>
-    );
-  }
-}
-
-function ClearPlaylist({ resetAllInPlaylist, playlistLength }) {
-  const [isClicked, setIsClicked] = useState(false);
-
-  const handleSliderClick = () => {
-    setIsClicked(true);
-    setTimeout(() => resetAllInPlaylist(), 200);
-    setTimeout(() => setIsClicked(false), 200);
+const PlaylistNew = ({
+  playlist,
+  playlistName,
+  updatePlaylistName,
+  onRemove,
+  onSave,
+  resetAllInPlaylist,
+}) => {
+  const handlePlaylistNameChange = ({ target }) => {
+    updatePlaylistName(target.value);
   };
 
   return (
-    <button
-      className={!playlistLength ? "clear-playlist disabled" : "clear-playlist"}
-      onClick={handleSliderClick}
-      disabled={!playlistLength}
-    >
-      <div>Clear All</div>
-      <div className="slider">
-        <div className={isClicked ? "slider-thumb animate-thumb" : "slider-thumb"}></div>
+    <PlaylistContainer>
+      <div className="playlist-header">
+        <div className="playlist-input">
+          <label htmlFor="playlistName">Title:</label>
+          <input
+            name="playlistName"
+            type="text"
+            value={playlistName}
+            onChange={handlePlaylistNameChange}
+            placeholder="Playlist Name"
+          />
+        </div>
+        <div className="playlist-controls">
+          <Btn onClick={onSave}>Save To Spotify</Btn>
+          <Btn onClick={resetAllInPlaylist}>Clear</Btn>
+        </div>
       </div>
-    </button>
+      <TrackList tracks={playlist} isRemovable={true} onRemove={onRemove} />
+    </PlaylistContainer>
   );
-}
+};
 
-export default Playlist;
+export default PlaylistNew;
+
+const Btn = styled.button`
+  cursor: pointer;
+  width: 8.11rem;
+  padding: 0.77rem 0;
+  border-radius: 54px;
+  background-color: rgb(29, 53, 87);
+  color: white;
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border: none;
+  transition: all 0.25s;
+  &:first-child {
+    margin-right: 1rem;
+  }
+  &:hover {
+    color: rgb(59, 59, 59);
+    background-color: rgb(168, 218, 220);
+  }
+`;
+
+const PlaylistContainer = styled.div`
+  width: 100%;
+  height: fit-content;
+  margin: 1rem;
+  .playlist-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .playlist-input {
+      display: flex;
+      align-items: center;
+
+      label {
+        color: white;
+        font-size: 1.5rem;
+        margin-right: 0.5rem;
+      }
+      input {
+        width: 100%;
+        max-width: 230px;
+        margin: 1rem 0;
+        padding: 0.25rem;
+        background: rgb(241, 250, 238);
+        font-family: Lato, sans-serif;
+        font-size: 1.1rem;
+        border: 1px solid #f3f3f5;
+        border-radius: 4px;
+        transition: background-color 0.2s ease;
+
+        &:focus {
+          outline: none;
+        }
+      }
+    }
+    .playlist-controls {
+      margin-left: 1rem;
+    }
+  }
+
+  @media only screen and (max-width: 1020px) {
+    width: 90%;
+    margin-bottom: 2rem;
+  }
+`;

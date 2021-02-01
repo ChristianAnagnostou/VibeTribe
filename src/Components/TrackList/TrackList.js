@@ -1,18 +1,17 @@
-import React from "react";
-import "./TrackList.css";
-import { Track } from "../Track/Track";
+import React, { useState } from "react";
+// Components
+import Track from "../Track/Track";
+// Styles
+import styled from "styled-components";
 
-export class TrackList extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { currentSongPlaying: "" };
-  }
+const TrackList = (props) => {
+  const [currentSongPlaying, setCurrentSongPlaying] = useState("");
 
-  handleSongChange = (params) => {
-    this.setState({ currentSongPlaying: params });
+  const handleSongChange = (params) => {
+    setCurrentSongPlaying(params);
   };
 
-  resetAllSongs = () => {
+  const resetAllSongs = () => {
     const audioEles = document.getElementsByTagName("audio");
     for (let i = 0; i < audioEles.length; i++) {
       audioEles[i].pause();
@@ -20,33 +19,35 @@ export class TrackList extends React.Component {
     }
   };
 
-  createTrack = () => {
-    return this.props.tracks.map((track) => {
-      return (
-        <Track
-          key={track.id}
-          name={track.name}
-          artist={track.artist}
-          album={track.album}
-          id={track.id}
-          uri={track.uri}
-          previewUrl={track.previewUrl}
-          isRemovable={this.props.isRemovable}
-          addTrack={this.props.onAdd}
-          removeTrack={this.props.onRemove}
-          handleSongChange={this.handleSongChange}
-          currentSongPlaying={this.state.currentSongPlaying}
-          resetAllSongs={this.resetAllSongs}
-        />
-      );
-    });
+  const createTrack = () => {
+    return props.tracks.map((track) => (
+      <Track
+        key={track.id}
+        track={track}
+        isRemovable={props.isRemovable}
+        addTrack={props.onAdd}
+        removeTrack={props.onRemove}
+        handleSongChange={handleSongChange}
+        currentSongPlaying={currentSongPlaying}
+        resetAllSongs={resetAllSongs}
+      />
+    ));
   };
 
-  render() {
-    return (
-      <div className="TrackList">
-        <ul>{this.createTrack()}</ul>
-      </div>
-    );
+  return (
+    <TrackListContainer>
+      <ul>{createTrack()}</ul>
+    </TrackListContainer>
+  );
+};
+export default TrackList;
+
+const TrackListContainer = styled.div`
+  width: 100%;
+  ul {
+    display: grid;
+    align-items: center;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    grid-gap: 1rem;
   }
-}
+`;

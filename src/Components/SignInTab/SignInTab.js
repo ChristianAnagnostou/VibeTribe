@@ -1,64 +1,90 @@
-import React from "react";
-import "./SignInTab.css";
+import React, { useEffect, useState } from "react";
+// Util
 import Spotify from "../../util/Spotify";
+// Components
 import AccountInfo from "./AccountInfo";
+// Styles
+import styled from "styled-components";
 
-export class SignInTab extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isSignedIn: false,
-      userInfo: null,
-    };
-  }
+const SignInTab = ({
+  addTrack,
+  updatePlaylistName,
+  playlistName,
+  emptyPlaylist,
+  setPlaylistID,
+}) => {
+  const [isSignedIn, setIsSignedIn] = useState(false);
+  const [userInfo, setUserInfo] = useState(null);
 
-  handleSignIn = () => {
+  const handleSignIn = () => {
     Spotify.getAccessToken();
   };
 
-  async componentDidMount() {
-    if (window.location.href.match(/access_token=([^&]*)/)) {
+  useEffect(() => {
+    const getUserInfo = async () => {
       try {
         const userResponse = await Spotify.getUserInfo();
-        this.setState({ isSignedIn: true, userInfo: userResponse });
-        if (!userResponse.ok) {
-          throw Error(userResponse.statusText);
-        }
+        // console.log(userResponse);
+
+        setIsSignedIn(true);
+        setUserInfo(userResponse);
       } catch (e) {
         console.log(e);
       }
-    }
-  }
+    };
 
-  setUserInfoPlaylistsState = async () => {
+    if (window.location.href.match(/access_token=([^&]*)/)) {
+      getUserInfo();
+    }
+  }, []);
+
+  const setUserInfoPlaylistsState = async () => {
     const updatedUserOwnedPlaylists = await Spotify.getUserOwnedPlaylists();
-    this.setState({
-      userInfo: { ...this.state.userInfo, userOwnedPlaylists: updatedUserOwnedPlaylists },
-    });
+
+    setUserInfo({ ...userInfo, userOwnedPlaylists: updatedUserOwnedPlaylists });
   };
 
-  render() {
-    if (this.state.isSignedIn) {
-      return (
-        <AccountInfo
-          userInfo={this.state.userInfo}
-          setUserInfoPlaylistsState={this.setUserInfoPlaylistsState}
-          addTrack={this.props.addTrack}
-          updatePlaylistName={this.props.updatePlaylistName}
-          playlistName={this.props.playlistName}
-          emptyPlaylist={this.props.emptyPlaylist}
-          setPlaylistID={this.props.setPlaylistID}
-        />
-      );
-    } else {
-      return (
-        <button onClick={this.handleSignIn} className="sign-in-tab">
-          <div className="sign-in-text">
-            <p>Login to </p>
-            <p>SPOTIFY</p>
-          </div>
-        </button>
-      );
-    }
+  if (isSignedIn) {
+    return (
+      <AccountInfo
+        userInfo={userInfo}
+        setUserInfoPlaylistsState={setUserInfoPlaylistsState}
+        addTrack={addTrack}
+        updatePlaylistName={updatePlaylistName}
+        playlistName={playlistName}
+        emptyPlaylist={emptyPlaylist}
+        setPlaylistID={setPlaylistID}
+      />
+    );
+  } else {
+    return (
+      <SpotifySignIn onClick={handleSignIn}>
+        <p className="sign-in-text">Connect with Spotify</p>
+      </SpotifySignIn>
+    );
   }
-}
+};
+
+export default SignInTab;
+
+const SpotifySignIn = styled.button`
+  /* User is NOT signed in */
+  padding: 0.75rem;
+  border-radius: 3px;
+  text-align: center;
+  font-size: 0.9rem;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+  transition: all 0.25s;
+  border: 1px solid white;
+  color: white;
+  background: transparent;
+
+  &:hover {
+    background-color: rgb(69, 123, 157);
+  }
+
+  .sign-in-text {
+    letter-spacing: 1px;
+  }
+`;

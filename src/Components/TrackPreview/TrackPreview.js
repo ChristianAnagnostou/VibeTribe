@@ -1,80 +1,140 @@
-import React from "react";
-import "./TrackPreview.css";
+import React, { useState, useEffect } from "react"; // Icons
 import PlayCircleOutlineIcon from "@material-ui/icons/PlayCircleOutline";
 import HighlightOffIcon from "@material-ui/icons/HighlightOff";
+// Styles
+import styled from "styled-components";
 
-export class TrackPreview extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { isPlaying: false };
-  }
+const TrackPreview = ({
+  previewUrl,
+  trackId,
+  handleSongChange,
+  currentSongPlaying,
+  resetAllSongs,
+}) => {
+  const [isPlaying, setIsPlaying] = useState(false);
 
-  renderPreviewSrc = () => {
-    return String(this.props.previewUrl);
+  const renderPreviewSrc = () => {
+    return String(previewUrl);
   };
 
-  controlPreview = () => {
-    const audioEle = document.getElementById(this.props.trackId);
+  const controlPreview = () => {
+    const audioEle = document.getElementById(trackId);
 
-    if (this.state.isPlaying) {
+    if (isPlaying) {
       // clicking stop button
-      this.props.handleSongChange("");
+      handleSongChange("");
       audioEle.pause();
       audioEle.load();
-      this.setState({ isPlaying: false });
+      setIsPlaying(false);
     } else {
       //if switching from another playing song
-      if (this.props.currentSongPlaying !== this.props.trackId) {
-        this.props.resetAllSongs();
+      if (currentSongPlaying !== trackId) {
+        resetAllSongs();
       }
 
       //clicking the play button
       audioEle.play();
-      this.props.handleSongChange(this.props.trackId);
-      this.setState({ isPlaying: true });
+      handleSongChange(trackId);
+      setIsPlaying(true);
       //check if the track ended on its own
       let checkForEnding = setInterval(() => {
         if (audioEle.ended) {
-          this.props.handleSongChange("");
+          handleSongChange("");
 
           clearInterval(checkForEnding);
-          this.setState({ isPlaying: false });
+          setIsPlaying(false);
         }
       }, 100);
     }
   };
 
   //set isPlaying to false if the song is paused from TrackList
-  componentDidUpdate() {
-    const audioEle = document.getElementById(this.props.trackId);
+  useEffect(() => {
+    const audioEle = document.getElementById(trackId);
     if (audioEle !== null) {
-      if (this.state.isPlaying & audioEle.paused) {
-        this.setState({ isPlaying: false });
+      if (isPlaying & audioEle.paused) {
+        setIsPlaying(false);
       }
+    }
+  }, [isPlaying, trackId]);
+
+  if (previewUrl) {
+    return (
+      <PreviewButton>
+        <audio id={trackId}>
+          <source src={renderPreviewSrc()} type="audio/mpeg" />
+        </audio>
+        {currentSongPlaying === trackId ? (
+          <span className="audioControl" onClick={controlPreview}>
+            <span className="progressCircle"></span>
+            <HighlightOffIcon className="previewIcon pause" style={{ fontSize: 35 }} />
+          </span>
+        ) : (
+          <span className="audioControl" onClick={controlPreview}>
+            <PlayCircleOutlineIcon className="previewIcon play" style={{ fontSize: 35 }} />
+          </span>
+        )}
+      </PreviewButton>
+    );
+  } else {
+    return <></>;
+  }
+};
+export default TrackPreview;
+
+const PreviewButton = styled.div`
+  position: absolute;
+  margin-left: auto;
+  margin-right: auto;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.15) !important;
+  }
+
+  .audioControl {
+    color: rgb(29, 53, 87);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    position: relative;
+    height: 35px;
+    width: 35px;
+    transition: all 0.2s ease;
+  }
+
+  .pause {
+    position: absolute;
+  }
+
+  .progressCircle {
+    position: absolute;
+    display: inline-block;
+    height: 28px;
+    width: 28px;
+    border-radius: 50%;
+    background: conic-gradient(transparent 50%, white);
+    animation: 30s linear 0s 1 spinner;
+  }
+
+  @-webkit-keyframes spinner {
+    to {
+      transform: rotate(1turn);
     }
   }
 
-  render() {
-    if (this.props.previewUrl) {
-      return (
-        <span className="Preview-button">
-          <audio id={this.props.trackId}>
-            <source src={this.renderPreviewSrc()} type="audio/mpeg" />
-          </audio>
-          {this.props.currentSongPlaying === this.props.trackId ? (
-            <span className="audioControl" onClick={this.controlPreview}>
-              <span className="progressCircle"></span>
-              <HighlightOffIcon className="previewIcon pause" style={{ fontSize: 35 }} />
-            </span>
-          ) : (
-            <span className="audioControl" onClick={this.controlPreview}>
-              <PlayCircleOutlineIcon className="previewIcon play" style={{ fontSize: 35 }} />
-            </span>
-          )}
-        </span>
-      );
-    } else {
-      return <span></span>;
+  @keyframes spinner {
+    to {
+      transform: rotate(1turn);
     }
   }
-}
+`;
