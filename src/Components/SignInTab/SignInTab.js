@@ -1,4 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
+// Redux
+import { useDispatch, useSelector } from "react-redux";
+import { userLogin } from "../../redux/actions/userActions";
 // Util
 import Spotify from "../../util/Spotify";
 // Components
@@ -6,56 +9,23 @@ import AccountInfo from "./AccountInfo";
 // Styles
 import styled from "styled-components";
 
-const SignInTab = ({
-  addTrack,
-  updatePlaylistName,
-  playlistName,
-  emptyPlaylist,
-  setPlaylistID,
-}) => {
-  const [isSignedIn, setIsSignedIn] = useState(false);
-  const [userInfo, setUserInfo] = useState(null);
+const SignInTab = () => {
+  // Redux
+  const dispatch = useDispatch();
+  const { loggedIn } = useSelector((state) => state.user);
 
   const handleSignIn = () => {
     Spotify.getAccessToken();
   };
 
   useEffect(() => {
-    const getUserInfo = async () => {
-      try {
-        const userResponse = await Spotify.getUserInfo();
-        // console.log(userResponse);
-
-        setIsSignedIn(true);
-        setUserInfo(userResponse);
-      } catch (e) {
-        console.log(e);
-      }
-    };
-
     if (window.location.href.match(/access_token=([^&]*)/)) {
-      getUserInfo();
+      dispatch(userLogin());
     }
-  }, []);
+  }, [dispatch]);
 
-  const setUserInfoPlaylistsState = async () => {
-    const updatedUserOwnedPlaylists = await Spotify.getUserOwnedPlaylists();
-
-    setUserInfo({ ...userInfo, userOwnedPlaylists: updatedUserOwnedPlaylists });
-  };
-
-  if (isSignedIn) {
-    return (
-      <AccountInfo
-        userInfo={userInfo}
-        setUserInfoPlaylistsState={setUserInfoPlaylistsState}
-        addTrack={addTrack}
-        updatePlaylistName={updatePlaylistName}
-        playlistName={playlistName}
-        emptyPlaylist={emptyPlaylist}
-        setPlaylistID={setPlaylistID}
-      />
-    );
+  if (loggedIn) {
+    return <AccountInfo />;
   } else {
     return (
       <SpotifySignIn onClick={handleSignIn}>

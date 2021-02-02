@@ -1,84 +1,57 @@
 import React, { useState, useEffect } from "react";
-// Util
-import Spotify from "../../util/Spotify";
-// import equal from "fast-deep-equal";
+// Redux
+import { useDispatch, useSelector } from "react-redux";
+import { importPlaylist } from "../../redux/actions/playlistActions";
 // Styles
 import styled from "styled-components";
+import { changeTab, getUserPlaylists } from "../../redux/actions/userActions";
 
-const AccountInfo = ({
-  addTrack,
-  emptyPlaylist,
-  playlistName,
-  setPlaylistID,
-  setUserInfoPlaylistsState,
-  updatePlaylistName,
-  userInfo,
-}) => {
+const AccountInfo = () => {
+  // Redux
+  const user = useSelector((state) => state.user);
+  // Local State
   const [tabActive, setTabActive] = useState(false);
-
-  useEffect(() => {
-    // console.log(userInfo);
-    // console.log(playlistName);
-    console.log("BUG update playlist name in accouint info");
-    // if (!equal(playlistName, prevProps.playlistName)) {
-    //   setUserInfoPlaylistsState();
-    // }
-  }, []);
 
   const toggleTab = () => {
     setTabActive(!tabActive);
   };
 
-  const importPlaylist = (playlist) => {
-    emptyPlaylist();
-    updatePlaylistName(playlist.name);
-    setPlaylistID(playlist.id);
-    Spotify.getPlaylistSongs(playlist.id).then((tracks) => {
-      tracks.map((track) => {
-        addTrack({
-          id: track.track.id,
-          name: track.track.name,
-          artist: track.track.artists[0].name,
-          album: track.track.album.name,
-          uri: track.track.uri,
-          href: track.track.album.href,
-          previewUrl: track.track.preview_url,
-          image: track.track.album.images[1].url,
-        });
-        return null;
-      });
-    });
-  };
-
   return (
     <AccountInfoContainer>
       <div className="user-image" onClick={toggleTab}>
-        {userInfo && <img src={userInfo.userProfileImg} alt="User" className="user-image" />}
+        <img src={user.images[0].url} alt="User" className="user-image" />
       </div>
       {tabActive && (
-        <OpenAccountInfo
-          userName={userInfo.userName}
-          userOwnedPlaylists={userInfo.userOwnedPlaylists}
-          importPlaylist={importPlaylist}
-        />
+        <ActiveTab userName={user.display_name} userOwnedPlaylists={user.userOwnedPlaylists} />
       )}
     </AccountInfoContainer>
   );
 };
-export default AccountInfo;
 
-const OpenAccountInfo = ({ userName, userOwnedPlaylists, importPlaylist }) => {
+const ActiveTab = ({ userName, userOwnedPlaylists }) => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    console.log("updating");
+    dispatch(getUserPlaylists(userName));
+  }, [dispatch, userName]);
+
+  const handlePlaylistClick = (playlistId, playlistName) => {
+    dispatch(importPlaylist(playlistId, playlistName));
+    dispatch(changeTab("playlist"));
+  };
+
   return (
     <AccountInfoTab>
       <p className="account-info-username">{userName}</p>
+      <p className="import-playlist-title">Import playlist</p>
       <div className="user-playlists-container">
-        <p className="import-playlist-title">Import playlist</p>
         <div>
           {userOwnedPlaylists.map((playlist) => {
             return (
               <p
                 key={playlist.id}
-                onClick={() => importPlaylist(playlist)}
+                onClick={() => handlePlaylistClick(playlist.id, playlist.name)}
                 className={"user-playlist"}
               >
                 {playlist.name}
@@ -91,7 +64,8 @@ const OpenAccountInfo = ({ userName, userOwnedPlaylists, importPlaylist }) => {
   );
 };
 
-// User is signed in
+export default AccountInfo;
+
 const AccountInfoContainer = styled.div`
   position: relative;
   color: white;
@@ -121,7 +95,6 @@ const AccountInfoTab = styled.div`
   position: absolute;
   top: 0;
   right: 100%;
-  border: 1px solid red;
   .account-info-username {
     margin-bottom: 15px;
     color: white;

@@ -1,19 +1,36 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+// Redux
+import { useDispatch, useSelector } from "react-redux";
+import { clearPlaylist, savePlaylist } from "../../redux/actions/playlistActions";
 // Components
-import TrackList from "../TrackList/TrackList";
+import { MemoizedTrackList } from "../TrackList/TrackList";
 // Styles
 import styled from "styled-components";
 
-const PlaylistNew = ({
-  playlist,
-  playlistName,
-  updatePlaylistName,
-  onRemove,
-  onSave,
-  resetAllInPlaylist,
-}) => {
+const Playlist = () => {
+  // Redux
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.user);
+  const { playlistTracks, playlistName, playlistID } = useSelector((state) => state.playlist);
+
+  const [currPlaylistName, setCurrPlaylistName] = useState(playlistName);
+
+  // Update playlist name when importing playlists
+  useEffect(() => {
+    setCurrPlaylistName(playlistName);
+  }, [playlistName]);
+
   const handlePlaylistNameChange = ({ target }) => {
-    updatePlaylistName(target.value);
+    setCurrPlaylistName(target.value);
+  };
+
+  const handleClear = () => {
+    dispatch(clearPlaylist());
+  };
+
+  const handleSave = () => {
+    dispatch(savePlaylist(playlistTracks, currPlaylistName, playlistID, user.id));
+    setCurrPlaylistName("");
   };
 
   return (
@@ -24,47 +41,24 @@ const PlaylistNew = ({
           <input
             name="playlistName"
             type="text"
-            value={playlistName}
+            value={currPlaylistName}
             onChange={handlePlaylistNameChange}
             placeholder="Playlist Name"
           />
         </div>
         <div className="playlist-controls">
-          <Btn onClick={onSave}>Save To Spotify</Btn>
-          <Btn onClick={resetAllInPlaylist}>Clear</Btn>
+          <Btn onClick={handleSave}>Save To Spotify</Btn>
+          <Btn onClick={handleClear}>Clear</Btn>
         </div>
       </div>
-      <TrackList tracks={playlist} isRemovable={true} onRemove={onRemove} />
+      <MemoizedTrackList tracks={playlistTracks} isRemovable={true} />
     </PlaylistContainer>
   );
 };
 
-export default PlaylistNew;
-
-const Btn = styled.button`
-  cursor: pointer;
-  width: 8.11rem;
-  padding: 0.77rem 0;
-  border-radius: 54px;
-  background-color: rgb(29, 53, 87);
-  color: white;
-  text-align: center;
-  font-size: 0.8rem;
-  font-weight: 500;
-  border: none;
-  transition: all 0.25s;
-  &:first-child {
-    margin-right: 1rem;
-  }
-  &:hover {
-    color: rgb(59, 59, 59);
-    background-color: rgb(168, 218, 220);
-  }
-`;
+export default Playlist;
 
 const PlaylistContainer = styled.div`
-  width: 100%;
-  height: fit-content;
   margin: 1rem;
   .playlist-header {
     display: flex;
@@ -100,9 +94,25 @@ const PlaylistContainer = styled.div`
       margin-left: 1rem;
     }
   }
+`;
 
-  @media only screen and (max-width: 1020px) {
-    width: 90%;
-    margin-bottom: 2rem;
+const Btn = styled.button`
+  cursor: pointer;
+  width: 8.11rem;
+  padding: 0.77rem 0;
+  border-radius: 54px;
+  background-color: rgb(29, 53, 87);
+  color: white;
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border: none;
+  transition: all 0.25s;
+  &:first-child {
+    margin-right: 1rem;
+  }
+  &:hover {
+    color: rgb(59, 59, 59);
+    background-color: rgb(168, 218, 220);
   }
 `;

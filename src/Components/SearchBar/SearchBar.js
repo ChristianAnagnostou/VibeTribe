@@ -1,8 +1,15 @@
 import React, { useState } from "react";
+// Redux
+import { useDispatch } from "react-redux";
+import { searchSpotify } from "../../redux/actions/resultsActions";
 // Styles
 import styled from "styled-components";
+import { changeTab } from "../../redux/actions/userActions";
 
-const SearchBarNew = ({ onSearch }) => {
+const SearchBar = () => {
+  // Redux
+  const dispatch = useDispatch();
+  // Local State
   const [inputTerm, setInputTerm] = useState("initialState");
 
   const handleTermChange = (e) => {
@@ -10,7 +17,8 @@ const SearchBarNew = ({ onSearch }) => {
   };
 
   const handleSearch = () => {
-    onSearch(inputTerm);
+    dispatch(searchSpotify(inputTerm));
+    dispatch(changeTab("results"));
   };
 
   const handleKeyDown = (e) => {
@@ -22,7 +30,6 @@ const SearchBarNew = ({ onSearch }) => {
   return (
     <SearchBarContainer>
       <h1>Get some tunes going!</h1>
-      <p></p>
       <input
         type="text"
         placeholder="song, album, or artist..."
@@ -34,7 +41,7 @@ const SearchBarNew = ({ onSearch }) => {
   );
 };
 
-export default SearchBarNew;
+export default SearchBar;
 
 const SearchBarContainer = styled.div`
   display: flex;

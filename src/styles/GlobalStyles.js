@@ -48,7 +48,9 @@ table {
 
 html {
   font-size: 18px;
-  font-family: "Poppins", sans-serif;
+	font-family: "Poppins", sans-serif;
+	background: rgb(69, 123, 157);
+
 }
 
 .flex-container {

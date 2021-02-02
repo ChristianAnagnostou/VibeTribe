@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, memo } from "react";
 // Components
 import Track from "../Track/Track";
 // Styles
 import styled from "styled-components";
 
-const TrackList = (props) => {
+const TrackList = ({ tracks, isRemovable }) => {
   const [currentSongPlaying, setCurrentSongPlaying] = useState("");
 
   const handleSongChange = (params) => {
@@ -20,13 +20,11 @@ const TrackList = (props) => {
   };
 
   const createTrack = () => {
-    return props.tracks.map((track) => (
+    return tracks.map((track) => (
       <Track
         key={track.id}
         track={track}
-        isRemovable={props.isRemovable}
-        addTrack={props.onAdd}
-        removeTrack={props.onRemove}
+        isRemovable={isRemovable}
         handleSongChange={handleSongChange}
         currentSongPlaying={currentSongPlaying}
         resetAllSongs={resetAllSongs}
@@ -40,7 +38,7 @@ const TrackList = (props) => {
     </TrackListContainer>
   );
 };
-export default TrackList;
+export const MemoizedTrackList = memo(TrackList);
 
 const TrackListContainer = styled.div`
   width: 100%;

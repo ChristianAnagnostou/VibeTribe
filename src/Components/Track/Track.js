@@ -1,37 +1,27 @@
 import React from "react";
+// Redux
+import { useDispatch } from "react-redux";
+import { addTrack, removeTrack } from "../../redux/actions/playlistActions";
 // Components
 import TrackPreview from "../TrackPreview/TrackPreview";
 // Styles
 import styled from "styled-components";
 
-const Track = ({
-  track,
-  isRemovable,
-  addTrack,
-  removeTrack,
-  handleSongChange,
-  currentSongPlaying,
-  resetAllSongs,
-}) => {
+const Track = ({ track, isRemovable, handleSongChange, currentSongPlaying, resetAllSongs }) => {
+  const dispatch = useDispatch();
+
   const handleTrackAction = () => {
     if (isRemovable) {
-      removeTrack({ id: track.id });
+      dispatch(removeTrack(track));
     } else {
-      addTrack({
-        name: track.name,
-        artist: track.artist,
-        album: track.album,
-        id: track.id,
-        uri: track.uri,
-        image: track.image,
-      });
+      dispatch(addTrack(track));
     }
   };
 
   const renderAction = () => {
     return (
       <AddButton onClick={handleTrackAction}>
-        <p>{isRemovable ? "Remove" : "Add to playlist"}</p>
+        <p>{isRemovable ? "Remove" : "Add"}</p>
         <button className="icon">{isRemovable ? "-" : "+"}</button>
       </AddButton>
     );
@@ -40,9 +30,9 @@ const Track = ({
   return (
     <TrackContainer>
       <div className="image-wrap">
-        <img src={track.image} alt="" />
+        <img src={track.album.images[1].url} alt="" />
         <TrackPreview
-          previewUrl={track.previewUrl}
+          previewUrl={track.preview_url}
           trackId={track.id}
           handleSongChange={handleSongChange}
           currentSongPlaying={currentSongPlaying}
@@ -52,7 +42,7 @@ const Track = ({
       <TrackInformation>
         <h3>{track.name}</h3>
         <p>
-          {track.artist} | {track.album}
+          {track.artists[0].name} | {track.album.name}
         </p>
       </TrackInformation>
       <span>{renderAction()}</span>

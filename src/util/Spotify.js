@@ -1,10 +1,7 @@
 const clientID = "053f2e85785e496ab82d9b0f6b8d29e6";
-const redirectURI = "http://localhost:3000/"; //only used for dev testing
-// const redirectURI = "http://spotalist.surge.sh/";
+// const redirectURI = "http://localhost:3000/"; //only used for dev testing
+const redirectURI = "http://vibetribe.surge.sh/";
 let accessToken;
-let userName;
-let userProfileImg;
-let userOwnedPlaylists;
 
 const Spotify = {
   // Get the users access token
@@ -35,36 +32,31 @@ const Spotify = {
       accessToken = Spotify.getAccessToken();
     }
 
-    if (!userName || !userProfileImg) {
-      // fetch userName and userProfileImg
-      const userNameAndImg = await this.getUserNameAndImg();
-      const { userName, userProfileImg } = userNameAndImg;
-      // fetch the user owned playlists
-      const userOwnedPlaylists = await this.getUserOwnedPlaylists();
-      return { userName, userProfileImg, userOwnedPlaylists };
-    }
-    return { userName, userProfileImg, userOwnedPlaylists };
+    // fetch user data
+    const userInfo = await this.getUserData();
+    const userName = userInfo.display_name;
+    // fetch the user owned playlists
+    const userOwnedPlaylists = await this.getUserOwnedPlaylists(userName);
+    return { ...userInfo, userOwnedPlaylists };
   },
 
-  // Get the user name and profile image
-  async getUserNameAndImg() {
+  // Get the user data
+  async getUserData() {
     try {
       const response = await fetch("https://api.spotify.com/v1/me", {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
-      const jsonResponse = await response.json();
-      userName = jsonResponse.display_name;
-      userProfileImg = jsonResponse.images[0].url;
-      return { userName, userProfileImg };
+      const userInfoResponse = await response.json();
+      return userInfoResponse;
     } catch (e) {
       console.log(e);
     }
   },
 
   // Get all playlists that the user has created
-  async getUserOwnedPlaylists() {
+  async getUserOwnedPlaylists(userName) {
     try {
       const response = await fetch("https://api.spotify.com/v1/me/playlists", {
         headers: {
@@ -73,7 +65,8 @@ const Spotify = {
       });
       const jsonResponse = await response.json();
       const userPlaylists = jsonResponse.items;
-      userOwnedPlaylists = userPlaylists.filter((playlist) => {
+
+      const userOwnedPlaylists = userPlaylists.filter((playlist) => {
         return playlist.owner.display_name === userName;
       });
       return userOwnedPlaylists;
@@ -110,105 +103,87 @@ const Spotify = {
           Authorization: `Bearer ${accessToken}`,
         },
       });
-      const jsonResponse = await response.json();
-      const tracks = jsonResponse.tracks;
-      if (!tracks) {
-        return [];
-      }
-      console.log(tracks);
-      const tracksArr = tracks.items.map((track) => {
-        return {
-          id: track.id,
-          name: track.name,
-          artist: track.artists[0].name,
-          album: track.album.name,
-          uri: track.uri,
-          href: track.album.href,
-          previewUrl: track.preview_url,
-          image: track.album.images[1].url,
-        };
-      });
-      return tracksArr;
+      const searchResponse = await response.json();
+      return searchResponse;
     } catch (e) {
       console.log(e);
     }
   },
 
-  async savePlaylist(playlistName, trackUriArray, playlistID = null) {
-    if (!playlistName || !trackUriArray.length || trackUriArray.length > 100) {
-      return;
-    }
-    const currentAccessToken = accessToken;
-    const headers = {
-      Authorization: `Bearer ${currentAccessToken}`,
-    };
-    let userID;
+  // Create a new playlist in the users account
+  async createNewPlaylist(userID, playlistName, trackUriArray, headers) {
+    let playlistID;
 
     try {
-      // fetch userID
-      const response = await fetch("https://api.spotify.com/v1/me", {
+      const postResponse = await fetch(`https://api.spotify.com/v1/users/${userID}/playlists`, {
         headers: headers,
+        method: "POST",
+        body: JSON.stringify({
+          name: playlistName,
+        }),
       });
-      const jsonResponse = await response.json();
-      userID = jsonResponse.id;
-
-      // If user is creating a new playlist
-      if (!playlistID) {
-        try {
-          // Create a new playlist in the users account
-          const postResponse = await fetch(`https://api.spotify.com/v1/users/${userID}/playlists`, {
-            headers: headers,
-            method: "POST",
-            body: JSON.stringify({
-              name: playlistName,
-            }),
-          });
-          const jsonPostResponse = await postResponse.json();
-          playlistID = jsonPostResponse.id;
-        } catch (e) {
-          console.log(e);
-        }
-        try {
-          // Add tracks to the playlist we just created
-          await fetch(`https://api.spotify.com/v1/playlists/${playlistID}/tracks`, {
-            headers: headers,
-            method: "POST",
-            body: JSON.stringify({
-              uris: trackUriArray,
-            }),
-          });
-        } catch (e) {
-          console.log(e);
-        }
-      } else {
-        // If user is updating an existing playlist
-        try {
-          // Replace tracks in the existing playlist
-          await fetch(`https://api.spotify.com/v1/playlists/${playlistID}/tracks`, {
-            headers: headers,
-            method: "PUT",
-            body: JSON.stringify({
-              uris: trackUriArray,
-            }),
-          });
-        } catch (e) {
-          console.log(e);
-        }
-        // Update the playlist name just in case the user changed it
-        try {
-          await fetch(`https://api.spotify.com/v1/playlists/${playlistID}`, {
-            headers: headers,
-            method: "PUT",
-            body: JSON.stringify({
-              name: playlistName,
-            }),
-          });
-        } catch (e) {
-          console.log(e);
-        }
-      }
+      const jsonPostResponse = await postResponse.json();
+      playlistID = jsonPostResponse.id;
     } catch (e) {
       console.log(e);
+    }
+
+    try {
+      // Add tracks to the playlist we just created
+      await fetch(`https://api.spotify.com/v1/playlists/${playlistID}/tracks`, {
+        headers: headers,
+        method: "POST",
+        body: JSON.stringify({
+          uris: trackUriArray,
+        }),
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  },
+
+  async updatePlaylist(playlistID, playlistName, trackUriArray, headers) {
+    // If user is updating an existing playlist
+    try {
+      // Replace tracks in the existing playlist
+      await fetch(`https://api.spotify.com/v1/playlists/${playlistID}/tracks`, {
+        headers: headers,
+        method: "PUT",
+        body: JSON.stringify({
+          uris: trackUriArray,
+        }),
+      });
+    } catch (e) {
+      console.log(e);
+    }
+    // Update the playlist name just in case the user changed it
+    try {
+      await fetch(`https://api.spotify.com/v1/playlists/${playlistID}`, {
+        headers: headers,
+        method: "PUT",
+        body: JSON.stringify({
+          name: playlistName,
+        }),
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  },
+
+  async savePlaylist(playlistName, trackUriArray, playlistID, userID) {
+    if (!playlistName || !trackUriArray.length || trackUriArray.length > 100) {
+      return new Error(
+        "Playlists must be between 1 and 100 songs and a playlist name must be included."
+      );
+    }
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    };
+
+    if (!playlistID) {
+      this.createNewPlaylist(userID, playlistName, trackUriArray, headers);
+    } else {
+      this.updatePlaylist(playlistID, playlistName, trackUriArray, headers);
     }
   },
 };
