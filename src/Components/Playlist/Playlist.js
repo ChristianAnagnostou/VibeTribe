@@ -67,7 +67,6 @@ const PlaylistContainer = styled.div`
     .playlist-input {
       display: flex;
       align-items: center;
-
       label {
         color: white;
         font-size: 1.5rem;
@@ -92,6 +91,12 @@ const PlaylistContainer = styled.div`
     }
     .playlist-controls {
       margin-left: 1rem;
+    }
+  }
+  @media (max-width: 500px) {
+    .playlist-header {
+      flex-direction: column;
+      margin-bottom: 0.75rem;
     }
   }
 `;

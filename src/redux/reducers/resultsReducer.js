@@ -1,6 +1,6 @@
 const initialState = { searchResults: [], nextResultSet: "" };
 
-export default (state = initialState, action) => {
+export const resultsReducer = (state = initialState, action) => {
   switch (action.type) {
     case "POPULATE_RESULTS":
       return {

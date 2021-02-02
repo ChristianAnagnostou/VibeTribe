@@ -5,7 +5,7 @@ import { userLogin } from "../../redux/actions/userActions";
 // Util
 import Spotify from "../../util/Spotify";
 // Components
-import AccountInfo from "./AccountInfo";
+import AccountInfo from "../AccountInfo/AccountInfo";
 // Styles
 import styled from "styled-components";
 
@@ -56,5 +56,10 @@ const SpotifySignIn = styled.button`
 
   .sign-in-text {
     letter-spacing: 1px;
+  }
+
+  @media (max-width: 500px) {
+    font-size: 0.6rem;
+    padding: 0.5rem 0.25rem;
   }
 `;

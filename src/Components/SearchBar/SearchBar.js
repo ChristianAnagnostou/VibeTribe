@@ -69,6 +69,16 @@ const SearchBarContainer = styled.div`
       outline: none;
     }
   }
+
+  @media (max-width: 500px) {
+    padding-top: 2rem;
+    h1 {
+      font-size: 1.25rem;
+    }
+    input {
+      width: 90%;
+    }
+  }
 `;
 
 const SearchButton = styled.div`

@@ -3,7 +3,7 @@ const initialState = {
   currentTab: "results",
 };
 
-export default (state = initialState, action) => {
+export const userReducer = (state = initialState, action) => {
   switch (action.type) {
     case "USER_LOGIN":
       return { ...state, ...action.payload.userInfo, loggedIn: true };

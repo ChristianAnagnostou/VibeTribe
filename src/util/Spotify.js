@@ -1,4 +1,3 @@
-const clientID = "053f2e85785e496ab82d9b0f6b8d29e6";
 // const redirectURI = "http://localhost:3000/"; //only used for dev testing
 const redirectURI = "http://vibetribe.surge.sh/";
 let accessToken;
@@ -23,7 +22,7 @@ const Spotify = {
       localStorage.setItem("userAccessToken", accessToken);
       return accessToken;
     } else {
-      window.location = `https://accounts.spotify.com/authorize?client_id=${clientID}&response_type=token&scope=playlist-modify-public&redirect_uri=${redirectURI}`;
+      window.location = `https://accounts.spotify.com/authorize?client_id=${process.env.REACT_APP_CLIENT_ID}&response_type=token&scope=playlist-modify-public&redirect_uri=${redirectURI}`;
     }
   },
 
@@ -142,8 +141,8 @@ const Spotify = {
     }
   },
 
+  // User is updating an existing playlist
   async updatePlaylist(playlistID, playlistName, trackUriArray, headers) {
-    // If user is updating an existing playlist
     try {
       // Replace tracks in the existing playlist
       await fetch(`https://api.spotify.com/v1/playlists/${playlistID}/tracks`, {
@@ -171,6 +170,7 @@ const Spotify = {
   },
 
   async savePlaylist(playlistName, trackUriArray, playlistID, userID) {
+    // Validate
     if (!playlistName || !trackUriArray.length || trackUriArray.length > 100) {
       return new Error(
         "Playlists must be between 1 and 100 songs and a playlist name must be included."
@@ -180,10 +180,11 @@ const Spotify = {
       Authorization: `Bearer ${accessToken}`,
     };
 
-    if (!playlistID) {
-      this.createNewPlaylist(userID, playlistName, trackUriArray, headers);
-    } else {
+    // Check if playlist already exists
+    if (playlistID) {
       this.updatePlaylist(playlistID, playlistName, trackUriArray, headers);
+    } else {
+      this.createNewPlaylist(userID, playlistName, trackUriArray, headers);
     }
   },
 };

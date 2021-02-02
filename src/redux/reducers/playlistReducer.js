@@ -1,6 +1,6 @@
 const initialState = { playlistTracks: [], playlistName: "", playlistID: null };
 
-export default (state = initialState, action) => {
+export const playlistReducer = (state = initialState, action) => {
   switch (action.type) {
     case "IMPORT_PLAYLIST":
       return {
