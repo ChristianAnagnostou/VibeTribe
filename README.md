@@ -1,25 +1,25 @@
 # Jamming App
 
-Jamming app availible at [christians-jams.surge.sh](http://christians-jams.surge.sh/) built in React.
+Jamming app availible at [vibetribe.surge.sh](http://vibetribe.surge.sh/) built in React.
 
 ## Building Process
 
-1. Created a new React project (npx create-react-app).
+1. Created a new React project (create-react-app).
 
-2. Decided to practice with React class components for this project. Also didn't want to include any packages to assist with the project so that I could get a handle for everything myself.
+2. Planned the project to include a user, playlist, and search results. Created redux stores to match accordingly. 
 
-3. The first approach was to create searching functionality and to connect that search to Spotify's API.
+3. Built UI with responsive mobile design.
 
-4. Displaying the requested search results and enabling them to be added to a new playlist was the next task.
+4. Implemented searching functionality through the Spotify's search API.
 
-5. Following the creation of the search results, I wanted to include a way to sample a snippet of the song, so that the user could have more information in making their decision to include the song in their playlist.
+5. Used CSS grid to display individual tracks.
 
-6. The snippets were playing over eachother if the user clicked multiple play buttons one after another, so I had to implement a way to control having only one snippet play at a time. This ended up being the most challending part of the project.
+6. I wanted the album cover to look as if it were a record spinning when you played the track preview.
 
-7. Next, the objective was to give the user the ability to save their playlist to their spotify account.
+7. One issue was that the track previews were playing over eachother if the user clicked multiple play buttons one after another, so I had to implement a way to control having only one snippet play at a time. This ended up being the most challending part of the project.
 
-8. At this point, the app was working, but I wanted to add a way to upload an existing playlist that the user had already created. This, again, was simple through the Spotify API and was easily extended to being an account tab for the user to access their account and playlists.
+8. Next, the objective was to give the user the ability to save their playlist to their spotify account.
 
-## Conclusion
+9. I wanted to add a way to upload an existing playlist that the user had already created. This, again, was done through the Spotify API and was extended to the user through an account tab to access account and playlists information.
 
-Thanks for visiting my Jamming Project and for taking time to read this!
+10. Users can now create and save a completely new playlist or load in an existing playlist, modify it, and save it to listen on their spotify app in seconds.
