@@ -1,4 +1,4 @@
-# Jamming App
+# VibeTribe
 
 Jamming app availible at [vibetribe.surge.sh](http://vibetribe.surge.sh/) built in React.
 
