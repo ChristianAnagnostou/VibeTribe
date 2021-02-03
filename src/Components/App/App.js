@@ -9,7 +9,7 @@ import SignInTab from "../SignInTab/SignInTab";
 import Spotify from "../../util/Spotify";
 // Styles
 import styled from "styled-components";
-// Icon
+// Icons
 import LibraryMusicIcon from "@material-ui/icons/LibraryMusic";
 import Tabs from "../Nav/Tabs";
 
